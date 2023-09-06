@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tasks</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .badge {
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .badge-pending {
+            background-color: #ff8080; /* Red */
+        }
+        .badge-inprogress {
+            background-color: #fff380; /* Yellow */
+        }
+        .badge-done {
+            background-color: #80ff80; /* Green */
+    }
+    </style>
+</head>
+<body>
+    <h1>Tasks</h1>
+    {% if is_head %}
+        <h3>Assign Task</h3>
+        <form method="POST">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                {{ form.task.label }} {{ form.task() }}
+            </div>
+            <div class="form-group">
+                <label for="assigned_user">Assign to User:</label>
+                <select class="form-control" id="assigned_user" name="assigned_user">
+                    {% for user in tasks %}
+                        <option value="{{ user[0] }}">{{ user[0] }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign Task</button>
+        </form>
+        <h3>All Tasks</h3>
+        <table>
+            <tr>
+                <th>Username</th>
+                <th>Task</th>
+                <th>Status</th>
+            </tr>
+            {% for user in tasks %}
+                {% for task in user[1] %}
+                    <tr>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ task[1] }}</td>
+                        <td>
+                            {% if task[2] == 'Pending' %}
+                                <span class="badge badge-pending">Pending</span>
+                            {% elif task[2] == 'In-Progress' %}
+                                <span class="badge badge-inprogress">In-Progress</span>
+                            {% elif task[2] == 'Done' %}
+                                <span class="badge badge-done">Done</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endfor %}
+        </table>
+    {% else %}
+        <h3>{{ user +"\'s"}} Tasks</h3>
+        <table>
+            <tr>
+                <th>Task</th>
+                <th>Status</th>
+            </tr>
+            {% for task in tasks %}
+                <tr>
+                    <td>{{ task[1] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('update_task', task_id=task[0]) }}">
+                            {{ form.csrf_token }}
+                            <select class="form-control" name="status" onchange="this.form.submit()" {% if task[2] == 'Pending' %} style="background-color: #ff8080;"{% endif %}{% if task[2] == 'In-Progress' %}style="background-color: #fff380;"{% endif %}{% if task[2] == 'Done' %}style="background-color: #80ff80;"{% endif %}>
+                                <option value="Pending" {% if task[2] == 'Pending' %}selected{% endif %}>Pending</option>
+                                <option value="In-Progress" {% if task[2] == 'In-Progress' %}selected{% endif %}>In-Progress</option>
+                                <option value="Done" {% if task[2] == 'Done' %}selected{% endif %}>Done</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <form method="POST" action="{{ url_for('logout') }}">
+        {{ form.csrf_token }}
+        <button type="submit" class="btn btn-primary" style="position:absolute; top:80px; right: 80px;">Logout</button>
+    </form>
+</body>
+</html>
