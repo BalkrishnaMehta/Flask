@@ -1,4 +1,4 @@
-                    Flask RESTful Application with MongoDB Docker Setup
+                                  **Flask RESTful Application with MongoDB Docker Setup**
 
 This repository contains a Flask RESTful application that uses MongoDB for data storage, and it's set up to run in Docker containers. Follow the instructions below to set up and run the application.
 
