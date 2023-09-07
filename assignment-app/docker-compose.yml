@@ -1,0 +1,13 @@
+version: '3'
+services:
+  assignment-app:
+    build: .
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
